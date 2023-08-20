@@ -3,6 +3,8 @@ libs <- c(
   "terra", "classInt", "rayshader", "raster"
 )
 
+#install.packages('terra', repos='https://rspatial.r-universe.dev')
+
 installed_libs <- libs %in% rownames(
   installed.packages()
 )
@@ -19,7 +21,7 @@ invisible(lapply(
   character.only = T
 ))
 
-#raster_file <- raster("C:/R/height_paraguay/heightpy/ETH_GlobalCanopyHeight_10m_2020_S27W057_Map.tif")
+#raster_files <- raster("C:/R/height_paraguay/heightpy/ETH_GlobalCanopyHeight_10m_2020_S27W057_Map.tif")
 
 
 raster_files <-
@@ -45,8 +47,8 @@ unique(
 paraguay_sf <- country_borders |>
   dplyr::filter(
     !NAME_1 %in% c(
-      "Paraguarí")
-  ) |>
+      "San Pedro", "Alto Paraguay", "Alto Paraná", "Amambay", "Asunción", "Boquerón", "Caaguazú", "Caazapá", "Canindeyú", "Canindeyú", "Concepción", "Cordillera", "Guairá", "Itapúa", "Misiones","Ñeembucú", "Presidente Hayes")
+      ) |>
   sf::st_union()
 
 plot(sf::st_geometry(paraguay_sf)) 
@@ -69,6 +71,7 @@ forest_height_rasters <- lapply(
     )
   }
 )
+
 #forest_height_mosaic <- do.call(
 #terra::mosaic,
 #forest_height_rasters)
@@ -77,7 +80,14 @@ forest_height_rasters <- lapply(
   #terra::aggregate(
     #fact = 10)
 
+#To vizualize raster file in ggplot we need to convert to data frame.
+#data frame holds information about the centroid of every pixel from your raster
+
+# 4. RASTER TO DATAFRAME
+#-----------------------
+
 forest_height_paraguay_df <- forest_height_rasters|>
   as.data.frame(
     xy = T
   )
+head(forest_height_paraguay_df)[3]<- "height"
